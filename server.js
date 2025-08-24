@@ -1,7 +1,7 @@
 
 require('dotenv').config()
 const cors = require("cors");
-require('./db/db')
+// require('./db/db')
 const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
@@ -18,18 +18,18 @@ const webLanding = require('./routes/Web/landing/index.js')
 const auth = require('./middleware/auth')
 app.use(express.json())
 app.use(cors());
-// const uri = process.env.DATABASE;
-// mongoose.set('strictQuery', false);
-// mongoose.connect(uri, {
-//     useNewUrlParser: true,
+const uri = process.env.DATABASE;
+mongoose.set('strictQuery', false);
+mongoose.connect(uri, {
+    useNewUrlParser: true,
 
-//     useUnifiedTopology: true,
-// });
+    useUnifiedTopology: true,
+});
 
-// const connection = mongoose.connection;
-// connection.once("open", () => {
-//     console.log("MongoDB database connection established successfully.");
-// })
+const connection = mongoose.connection;
+connection.once("open", () => {
+    console.log("MongoDB database connection established successfully.");
+})
 
 
 app.use('/auth', Auth)
