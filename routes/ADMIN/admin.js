@@ -2,9 +2,10 @@ const express = require('express');
 const Admin = require('../../Models/Admin');
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; 
+const JWT_SECRET = process.env.PRIVATE_KEY || 'your-secret-key'; 
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const auth = require('../../middleware/auth');
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -71,5 +72,26 @@ return    res.status(500).json({ error: err.message });
   }
 });
 
+// Protected admin routes
+router.get('/dashboard', auth, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user);
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found.' });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Admin dashboard accessed successfully.',
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
